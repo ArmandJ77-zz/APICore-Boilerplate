@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Unit.Tests.UnitOfWork.Entities;
+using Repositories;
 using Unit.Tests.UnitOFWork.ObjectMothers;
 using UnitOfWork;
 

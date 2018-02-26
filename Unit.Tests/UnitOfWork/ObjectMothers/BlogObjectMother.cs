@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Unit.Tests.UnitOfWork.Entities;
+using Repositories;
 using Unit.Tests.UnitOfWork.ObjectMothers;
 
 namespace Unit.Tests.UnitOFWork.ObjectMothers
@@ -41,6 +41,14 @@ namespace Unit.Tests.UnitOFWork.ObjectMothers
             Posts = new List<Post> { PostsObjectMother.Post }
         };
 
+        public static Blog NewAsyncBlog => new Blog
+        {
+            Title = "New Async Blog",
+            Hits = 24,
+            Url = "http://qwerty.com/Testing Insert Blog",
+            Posts = new List<Post> { PostsObjectMother.Post }
+        };
+
         public static Blog BlogA => new Blog
         {
             Title = "BlogA",
@@ -63,7 +71,30 @@ namespace Unit.Tests.UnitOFWork.ObjectMothers
             Hits = 24,
             Posts = null,
             Url = "http://qwerty.com/Testing Insert Blog"
-
         };
+
+        public static List<Blog> BuildBlogs(int numberOfBlogs)
+        {
+            var blogs = new List<Blog>();
+            for (var i = 0; i < numberOfBlogs; i++)
+            {
+                blogs.Add(new Blog
+                {
+                    Title = $"New MultiInsert Blog {i}",
+                    Hits = i,
+                    Url = "http://qwerty.com/" + $"{i}",
+                    Posts = new List<Post>
+                    {
+                        new Post
+                        {
+                            Title = $"Posts {i}",
+                            Content = "qwerty asdf"
+                        }
+                    }
+                });
+            }
+
+            return blogs;
+        }
     }
 }

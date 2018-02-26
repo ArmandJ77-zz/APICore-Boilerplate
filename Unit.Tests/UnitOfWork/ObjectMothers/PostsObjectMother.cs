@@ -1,4 +1,4 @@
-﻿using Unit.Tests.UnitOfWork.Entities;
+﻿using Repositories;
 
 namespace Unit.Tests.UnitOfWork.ObjectMothers
 {

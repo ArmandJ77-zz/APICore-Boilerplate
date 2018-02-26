@@ -42,7 +42,7 @@ namespace UnitOfWork
                                          Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                                          Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
                                          int pageIndex = 0,
-                                         int pageSize = 20,
+                                         int pageSize = 10,
                                          bool disableTracking = true);
 
         /// <summary>
@@ -110,6 +110,32 @@ namespace UnitOfWork
                                                              int pageSize = 20,
                                                              bool disableTracking = true,
                                                              CancellationToken cancellationToken = default(CancellationToken)) where TResult : class;
+        #endregion
+
+        #region List
+        IList<TEntity> GetList(Expression<Func<TEntity, bool>> predicate = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+            bool disableTracking = true);
+
+        Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+            bool disableTracking = true,
+            CancellationToken cancellationToken = default(CancellationToken));
+
+        IList<TResult> GetList<TResult>(Expression<Func<TEntity, TResult>> selector,
+            Expression<Func<TEntity, bool>> predicate = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+            bool disableTracking = true) where TResult : class;
+
+        Task<List<TResult>> GetListAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
+            Expression<Func<TEntity, bool>> predicate = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+            bool disableTracking = true,
+            CancellationToken cancellationToken = default(CancellationToken)) where TResult : class;
         #endregion
 
         #region FIRSTORDEFAULT 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
@@ -17,7 +18,7 @@ namespace UnitOfWork
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        protected readonly DbContext _dbContext;
+        protected DbContext _dbContext;
         protected readonly DbSet<TEntity> _dbSet;
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace UnitOfWork
         /// </summary>
         /// <returns>The <see cref="IQueryable{TEntity}"/>.</returns>
         public IQueryable<TEntity> GetAll()
-            =>_dbSet;
+            => _dbSet;
 
         /// <summary>
         /// Gets the count based on a predicate.
@@ -63,7 +64,7 @@ namespace UnitOfWork
                                                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                                                 Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
                                                 int pageIndex = 0,
-                                                int pageSize = 20,
+                                                int pageSize = 10,
                                                 bool disableTracking = true)
         {
             IQueryable<TEntity> query = _dbSet;
@@ -76,10 +77,8 @@ namespace UnitOfWork
             if (predicate != null)
                 query = query.Where(predicate);
 
-            if (orderBy == null)
-                return query.ToPagedList(pageIndex, pageSize);
-            else
-                return orderBy(query).ToPagedList(pageIndex, pageSize);
+            return orderBy == null ? query.ToPagedList(pageIndex, pageSize)
+                : orderBy(query).ToPagedList(pageIndex, pageSize);
         }
 
         /// <summary>
@@ -114,10 +113,8 @@ namespace UnitOfWork
             if (predicate != null)
                 query = query.Where(predicate);
 
-            if (orderBy == null)
-                return query.ToPagedListAsync(pageIndex, pageSize, 0, cancellationToken);
-            else
-                return orderBy(query).ToPagedListAsync(pageIndex, pageSize, 0, cancellationToken);
+            return orderBy?.Invoke(query).ToPagedListAsync(pageIndex, pageSize, 0, cancellationToken)
+                ?? query.ToPagedListAsync(pageIndex, pageSize, 0, cancellationToken);
         }
 
         /// <summary>
@@ -151,10 +148,8 @@ namespace UnitOfWork
             if (predicate != null)
                 query = query.Where(predicate);
 
-            if (orderBy == null)
-                return query.Select(selector).ToPagedList(pageIndex, pageSize);
-            else
-                return orderBy(query).Select(selector).ToPagedList(pageIndex, pageSize);
+            return orderBy == null ? query.Select(selector).ToPagedList(pageIndex, pageSize)
+                : orderBy(query).Select(selector).ToPagedList(pageIndex, pageSize);
         }
 
         /// <summary>
@@ -184,28 +179,147 @@ namespace UnitOfWork
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
-            {
                 query = query.AsNoTracking();
-            }
 
             if (include != null)
-            {
                 query = include(query);
-            }
 
             if (predicate != null)
-            {
                 query = query.Where(predicate);
-            }
 
-            if (orderBy != null)
-            {
-                return orderBy(query).Select(selector).ToPagedListAsync(pageIndex, pageSize, 0, cancellationToken);
-            }
-            else
-            {
-                return query.Select(selector).ToPagedListAsync(pageIndex, pageSize, 0, cancellationToken);
-            }
+            return orderBy?.Invoke(query).Select(selector).ToPagedListAsync(pageIndex, pageSize, 0, cancellationToken)
+                ?? query.Select(selector).ToPagedListAsync(pageIndex, pageSize, 0, cancellationToken);
+        }
+        #endregion
+
+        #region LIST
+        /// <summary>
+        /// Gets the <see cref="IList{T}"/> based on a predicate, orderby delegate and page information. This method default no-tracking query.
+        /// </summary>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="orderBy">A function to order elements.</param>
+        /// <param name="include">A function to include navigation properties</param>
+        /// <param name="disableTracking"><c>True</c> to disable changing tracking; otherwise, <c>false</c>. Default to <c>true</c>.</param>
+        /// <returns>An <see cref="IList{TEntity}"/> that contains elements that satisfy the condition specified by <paramref name="predicate"/>.</returns>
+        /// <remarks>This method default no-tracking query.</remarks>
+        public IList<TEntity> GetList(Expression<Func<TEntity, bool>> predicate = null,
+                                                Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                                Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+                                                bool disableTracking = true)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            if (disableTracking)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return
+                orderBy?.Invoke(query).ToList()
+                ?? query.ToList();
+        }
+
+        /// <summary>
+        /// Gets the <see cref="IList{TEntity}"/> based on a predicate, orderby delegate and page information. This method default no-tracking query.
+        /// </summary>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="orderBy">A function to order elements.</param>
+        /// <param name="include">A function to include navigation properties</param>
+        /// <param name="disableTracking"><c>True</c> to disable changing tracking; otherwise, <c>false</c>. Default to <c>true</c>.</param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+        /// </param>
+        /// <returns>An <see cref="IList{TEntity}"/> that contains elements that satisfy the condition specified by <paramref name="predicate"/>.</returns>
+        /// <remarks>This method default no-tracking query.</remarks>
+        public Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate = null,
+                                                           Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                                           Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+                                                           bool disableTracking = true,
+                                                           CancellationToken cancellationToken = default(CancellationToken))
+        {
+            IQueryable<TEntity> query = _dbSet;
+            if (disableTracking)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return
+                orderBy?.Invoke(query).ToListAsync(cancellationToken)
+                ?? query.ToListAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="IList{TResult}"/> based on a predicate, orderby delegate and page information. This method default no-tracking query.
+        /// </summary>
+        /// <param name="selector">The selector for projection.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="orderBy">A function to order elements.</param>
+        /// <param name="include">A function to include navigation properties</param>
+        /// <param name="disableTracking"><c>True</c> to disable changing tracking; otherwise, <c>false</c>. Default to <c>true</c>.</param>
+        /// <returns>An <see cref="IList{TResult}"/> that contains elements that satisfy the condition specified by <paramref name="predicate"/>.</returns>
+        /// <remarks>This method default no-tracking query.</remarks>
+        public IList<TResult> GetList<TResult>(Expression<Func<TEntity, TResult>> selector,
+                                                         Expression<Func<TEntity, bool>> predicate = null,
+                                                         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                                         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+                                                         bool disableTracking = true)
+            where TResult : class
+        {
+            IQueryable<TEntity> query = _dbSet;
+            if (disableTracking)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return orderBy?.Invoke(query).Select(selector).ToList()
+                ?? query.Select(selector).ToList();
+        }
+
+        /// <summary>
+        /// Gets the <see cref="IList{TEntity}"/> based on a predicate, orderby delegate and page information. This method default no-tracking query.
+        /// </summary>
+        /// <param name="selector">The selector for projection.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="orderBy">A function to order elements.</param>
+        /// <param name="include">A function to include navigation properties</param>
+        /// <param name="disableTracking"><c>True</c> to disable changing tracking; otherwise, <c>false</c>. Default to <c>true</c>.</param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+        /// </param>
+        /// <returns>An <see cref="IList{TEntity}"/> that contains elements that satisfy the condition specified by <paramref name="predicate"/>.</returns>
+        /// <remarks>This method default no-tracking query.</remarks>
+        public Task<List<TResult>> GetListAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
+                                                                    Expression<Func<TEntity, bool>> predicate = null,
+                                                                    Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                                                    Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+                                                                    bool disableTracking = true,
+                                                                    CancellationToken cancellationToken = default(CancellationToken))
+            where TResult : class
+        {
+            IQueryable<TEntity> query = _dbSet;
+            if (disableTracking)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return orderBy != null ?
+                orderBy(query).Select(selector).ToListAsync(cancellationToken)
+                : query.Select(selector).ToListAsync(cancellationToken);
         }
         #endregion
 
@@ -234,10 +348,8 @@ namespace UnitOfWork
             if (predicate != null)
                 query = query.Where(predicate);
 
-            if (orderBy == null)
-                return query.FirstOrDefault();
-            else
-                return orderBy(query).FirstOrDefault();
+            return orderBy == null ? query.FirstOrDefault()
+                : orderBy(query).FirstOrDefault();
         }
 
 
@@ -257,10 +369,8 @@ namespace UnitOfWork
             if (predicate != null)
                 query = query.Where(predicate);
 
-            if (orderBy != null)
-                return await orderBy(query).FirstOrDefaultAsync();
-            else
-                return await query.FirstOrDefaultAsync();
+            return orderBy != null ? await orderBy(query).FirstOrDefaultAsync()
+                : await query.FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -281,28 +391,16 @@ namespace UnitOfWork
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
-            {
                 query = query.AsNoTracking();
-            }
 
             if (include != null)
-            {
                 query = include(query);
-            }
 
             if (predicate != null)
-            {
                 query = query.Where(predicate);
-            }
 
-            if (orderBy != null)
-            {
-                return orderBy(query).Select(selector).FirstOrDefault();
-            }
-            else
-            {
-                return query.Select(selector).FirstOrDefault();
-            }
+            return orderBy != null ? orderBy(query).Select(selector).FirstOrDefault()
+                : query.Select(selector).FirstOrDefault();
         }
 
         /// <inheritdoc />
@@ -314,47 +412,51 @@ namespace UnitOfWork
         {
             IQueryable<TEntity> query = _dbSet;
             if (disableTracking)
-            {
                 query = query.AsNoTracking();
-            }
 
             if (include != null)
-            {
                 query = include(query);
-            }
 
             if (predicate != null)
-            {
                 query = query.Where(predicate);
-            }
 
-            if (orderBy != null)
-            {
-                return await orderBy(query).Select(selector).FirstOrDefaultAsync();
-            }
-            else
-            {
-                return await query.Select(selector).FirstOrDefaultAsync();
-            }
+            return orderBy != null
+                ? await orderBy(query).Select(selector).FirstOrDefaultAsync()
+                : await query.Select(selector).FirstOrDefaultAsync();
         }
         #endregion
 
         #region FIND 
+
         /// <summary>
         /// Finds an entity with the given primary key values. If found, is attached to the context and returned.
         /// If no entity is found, then null is returned.
         /// </summary>
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
         /// <returns>The found entity or null.</returns>
-        public TEntity Find(params object[] keyValues) 
-            => _dbSet.Find(keyValues);
+        public TEntity Find(params object[] keyValues)
+        {
+            var findResult = _dbSet.Find(keyValues);
+
+            if (findResult == null)
+                return null;
+
+            var isDeleted = findResult.GetType().GetProperty("IsDeleted");
+            if ((findResult.GetType().GetProperty("IsDeleted") != null) &&
+                ((bool)isDeleted.GetValue(findResult) == true))
+                return null;
+
+            return _dbSet.Find(keyValues);
+        }
+        //=> _dbSet.Where(x => x.)
+        //.Find(keyValues);
 
         /// <summary>
         /// Finds an entity with the given primary key values. If found, is attached to the context and returned. If no entity is found, then null is returned.
         /// </summary>
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
         /// <returns>A <see cref="Task{TEntity}" /> that represents the asynchronous insert operation.</returns>
-        public Task<TEntity> FindAsync(params object[] keyValues) 
+        public Task<TEntity> FindAsync(params object[] keyValues)
             => _dbSet.FindAsync(keyValues);
 
         /// <summary>
@@ -363,7 +465,7 @@ namespace UnitOfWork
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>A <see cref="Task{TEntity}"/> that represents the asynchronous find operation. The task result contains the found entity or null.</returns>
-        public Task<TEntity> FindAsync(object[] keyValues, CancellationToken cancellationToken) 
+        public Task<TEntity> FindAsync(object[] keyValues, CancellationToken cancellationToken)
             => _dbSet.FindAsync(keyValues, cancellationToken);
         #endregion
 
@@ -379,14 +481,14 @@ namespace UnitOfWork
         /// Inserts a range of entities synchronously.
         /// </summary>
         /// <param name="entities">The entities to insert.</param>
-        public void Insert(params TEntity[] entities) 
+        public void Insert(params TEntity[] entities)
             => _dbSet.AddRange(entities);
 
         /// <summary>
         /// Inserts a range of entities synchronously.
         /// </summary>
         /// <param name="entities">The entities to insert.</param>
-        public void Insert(IEnumerable<TEntity> entities) 
+        public void Insert(IEnumerable<TEntity> entities)
             => _dbSet.AddRange(entities);
 
         /// <summary>
@@ -444,14 +546,14 @@ namespace UnitOfWork
         /// Updates the specified entities.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        public void Update(params TEntity[] entities) 
+        public void Update(params TEntity[] entities)
             => _dbSet.UpdateRange(entities);
 
         /// <summary>
         /// Updates the specified entities.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        public void Update(IEnumerable<TEntity> entities) 
+        public void Update(IEnumerable<TEntity> entities)
             => _dbSet.UpdateRange(entities);
         #endregion
 
@@ -460,7 +562,7 @@ namespace UnitOfWork
         /// Deletes the specified entity.
         /// </summary>
         /// <param name="entity">The entity to delete.</param>
-        public void Delete(TEntity entity) 
+        public void Delete(TEntity entity)
             => _dbSet.Remove(entity);
 
         /// <summary>
@@ -498,7 +600,7 @@ namespace UnitOfWork
         /// Deletes the specified entities.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        public void Delete(IEnumerable<TEntity> entities) 
+        public void Delete(IEnumerable<TEntity> entities)
             => _dbSet.RemoveRange(entities);
         #endregion
 
@@ -509,7 +611,7 @@ namespace UnitOfWork
         /// <param name="sql">The raw SQL.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>An <see cref="IQueryable{TEntity}" /> that contains elements that satisfy the condition specified by raw SQL.</returns>
-        public IQueryable<TEntity> FromSql(string sql, params object[] parameters) 
+        public IQueryable<TEntity> FromSql(string sql, params object[] parameters)
             => _dbSet.FromSql(sql, parameters);
         #endregion
     }
