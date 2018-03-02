@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
+using TestObjects.ObjectMothers;
 using Unit.Tests.UnitOfWork.Infrastructure;
-using Unit.Tests.UnitOFWork.ObjectMothers;
 
 namespace Unit.Tests.UnitOfWork.RepositoryTests
 {
@@ -10,7 +10,11 @@ namespace Unit.Tests.UnitOfWork.RepositoryTests
         [Test]
         public void RepositoryUpdate_Blog_UpdatedBlog()
         {
-            var blog = BlogObjectMother.NewBlog;
+            var blog = BlogObjectMother
+                .aDefaultBlog()
+                .WithTile("Update Blog")
+                .ToRepository();
+
             BlogRepository.Insert(blog);
             db.SaveChanges();
 

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using Repositories;
-using Unit.Tests.UnitOFWork.ObjectMothers;
+using TestObjects.ObjectMothers;
 using UnitOfWork;
 
 namespace Unit.Tests.UnitOfWork.Infrastructure
@@ -49,7 +49,8 @@ namespace Unit.Tests.UnitOfWork.Infrastructure
 
         private void AddObjectMothers()
         {
-            db.AddRange(BlogObjectMother.GetBlogs());
+            db.AddRange(BlogObjectMother.aListOfBlogsAndPosts());
+            db.Add(BlogObjectMother.aDefaultBlog().WithTile("ASDF").ToRepository());
         }
     }
 }

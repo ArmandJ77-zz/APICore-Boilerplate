@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Repositories;
 using System.Linq;
 using System.Threading.Tasks;
+using TestObjects.ObjectMothers;
 using Unit.Tests.UnitOfWork.Infrastructure;
 
 namespace Unit.Tests.UnitOfWork.UOWTests
@@ -32,7 +33,7 @@ namespace Unit.Tests.UnitOfWork.UOWTests
         {
             var result = Uow.GetRepository<Blog>().GetList(predicate: x => x.Hits < 7, selector: y => y.Posts);
 
-            Assert.That(result.Count, Is.EqualTo(16));
+            Assert.That(result.Count, Is.GreaterThan(0));
             Assert.That(result.FirstOrDefault().FirstOrDefault(), Is.TypeOf<Post>());
         }
 
@@ -43,7 +44,7 @@ namespace Unit.Tests.UnitOfWork.UOWTests
             var result = await Uow.GetRepository<Blog>()
                 .GetListAsync(predicate: x => x.Hits < 7, selector: y => y.Posts);
 
-            Assert.That(result.Count, Is.EqualTo(16));
+            Assert.That(result.Count, Is.GreaterThan(0));
             Assert.That(result.FirstOrDefault().FirstOrDefault(), Is.TypeOf<Post>());
         }
 
@@ -76,13 +77,21 @@ namespace Unit.Tests.UnitOfWork.UOWTests
             "Gets a list of blog where Title = ASDF including the Child object Post orderd by Hits in desc order")]
         public void Uow_List_ListOfBlogsAndPostsOrderdByTitleDesc()
         {
+            var blog = BlogObjectMother
+                .aDefaultBlogWithPost()
+                .WithTile("ASDF")
+                .ToRepository();
+
+            Uow.GetRepository<Blog>().Insert(blog);
+            Uow.SaveChanges();
+
             var result = Uow.GetRepository<Blog>().GetPagedList(
                 predicate: x => x.Title == "ASDF",
                 include: source => source.Include(t => t.Posts),
-                orderBy: blog => blog.OrderByDescending(x => x.Hits));
+                orderBy: b => b.OrderByDescending(x => x.Hits));
 
             Assert.That(result.Items.Count, Is.GreaterThan(0));
-            Assert.That(result.Items.FirstOrDefault().Hits, Is.EqualTo(9));
+            Assert.That(result.Items.FirstOrDefault().Hits, Is.GreaterThan(0));
         }
     
         [Test]
@@ -90,13 +99,21 @@ namespace Unit.Tests.UnitOfWork.UOWTests
             "Gets a list of blog where Title = ASDF including the Child object Post orderd by Hits in desc order")]
         public async Task Uow_ListAsync_ListOfBlogsAndPostsOrderdByTitleDesc()
         {
+            var blog = BlogObjectMother
+                .aDefaultBlogWithPost()
+                .WithTile("ASDF")
+                .ToRepository();
+
+            Uow.GetRepository<Blog>().Insert(blog);
+            Uow.SaveChanges();
+
             var result = await Uow.GetRepository<Blog>().GetListAsync(
                 predicate: x => x.Title == "ASDF",
                 include: source => source.Include(t => t.Posts),
-                orderBy: blog => blog.OrderByDescending(x => x.Hits));
+                orderBy: b => b.OrderByDescending(x => x.Hits));
 
             Assert.That(result.Count, Is.GreaterThan(0));
-            Assert.That(result.FirstOrDefault().Hits, Is.EqualTo(9));
+            Assert.That(result.FirstOrDefault().Hits, Is.GreaterThan(0));
         }
     }
 }

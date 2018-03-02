@@ -1,8 +1,9 @@
 ﻿using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Repositories;
+using TestObjects.ObjectMothers;
 using Unit.Tests.UnitOfWork.Infrastructure;
-using Unit.Tests.UnitOFWork.ObjectMothers;
+
 
 namespace Unit.Tests.UnitOfWork.UOWTests
 {
@@ -12,7 +13,10 @@ namespace Unit.Tests.UnitOfWork.UOWTests
         [Test]
         public void Uow_UpdateBlog_UpdatedBlog()
         {
-            var blog = BlogObjectMother.NewBlog;
+            var blog = BlogObjectMother
+                .aDefaultBlog()
+                .ToRepository();
+
             Uow.GetRepository<Blog>().Insert(blog);
             Uow.SaveChanges();
 

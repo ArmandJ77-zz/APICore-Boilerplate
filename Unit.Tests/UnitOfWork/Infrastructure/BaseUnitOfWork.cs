@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using Repositories;
-using Unit.Tests.UnitOFWork.ObjectMothers;
+using TestObjects.ObjectMothers;
 using UnitOfWork;
 
 namespace Unit.Tests.UnitOfWork.Infrastructure
@@ -27,7 +27,6 @@ namespace Unit.Tests.UnitOfWork.Infrastructure
         {
             ClearDb();
             Uow.Dispose();
-            Uow = null;
         }
 
         private void ClearDb()
@@ -38,7 +37,7 @@ namespace Unit.Tests.UnitOfWork.Infrastructure
 
         private void AddObjectMothers()
         {
-            Uow.GetRepository<Blog>().Insert(BlogObjectMother.GetBlogs());
+            Uow.GetRepository<Blog>().Insert(BlogObjectMother.aListOfBlogsAndPosts());
         }
     }
 }

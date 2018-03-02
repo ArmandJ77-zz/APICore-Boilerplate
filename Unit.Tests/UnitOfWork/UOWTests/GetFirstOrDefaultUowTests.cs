@@ -3,6 +3,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Repositories;
 using System.Linq;
+using TestObjects.ObjectMothers;
 using Unit.Tests.UnitOfWork.Infrastructure;
 
 namespace Unit.Tests.UnitOfWork.UOWTests
@@ -19,7 +20,6 @@ namespace Unit.Tests.UnitOfWork.UOWTests
                 include: i => i.Include(a => a.Posts));
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Hits, Is.EqualTo(55));
             Assert.That(result.Posts, Is.Not.Null);
         }
 
@@ -27,6 +27,14 @@ namespace Unit.Tests.UnitOfWork.UOWTests
         [Description("Gets the FirstOrDefault value Where title = ASDF including Posts orderd by DESC select first post")]
         public void Uow_FirstOrDefaultBlog_FirstPost()
         {
+            var blog = BlogObjectMother
+                .aDefaultBlogWithPost()
+                .WithTile("ASDF")
+                .ToRepository();
+
+            Uow.GetRepository<Blog>().Insert(blog);
+            Uow.SaveChanges();
+
             var result = Uow.GetRepository<Blog>().GetFirstOrDefault(
                 predicate: x => x.Title == "ASDF",
                 orderBy: o => o.OrderByDescending(d => d.Hits),

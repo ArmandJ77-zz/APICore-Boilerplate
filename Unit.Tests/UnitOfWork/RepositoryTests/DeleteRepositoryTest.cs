@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using System.Linq;
+using TestObjects.ObjectMothers;
 using Unit.Tests.UnitOfWork.Infrastructure;
-using Unit.Tests.UnitOFWork.ObjectMothers;
 
 namespace Unit.Tests.UnitOfWork.RepositoryTests
 {
@@ -12,14 +12,21 @@ namespace Unit.Tests.UnitOfWork.RepositoryTests
         [Test]
         public void RepositoryDelete_Blog_Null()
         {
-            var blog = BlogObjectMother.NewBlogNoPosts;
+            var blog = BlogObjectMother
+                .aDefaultBlogWithPost()
+                .ToRepository();
+
             BlogRepository.Insert(blog);
             db.SaveChanges();
 
             var insertResult = BlogRepository.GetFirstOrDefault(predicate: x =>
-                x.Title == BlogObjectMother.NewBlog.Title);
+                x.Title == BlogObjectMother
+                .aDefaultBlogWithPost()
+                .Title);
 
-            Assert.That(insertResult.Title, Is.EqualTo(BlogObjectMother.NewBlogNoPosts.Title));
+            Assert.That(insertResult.Title, Is.EqualTo(BlogObjectMother
+                .aDefaultBlogWithPost()
+                .Title));
 
             BlogRepository.Delete(blog);
             db.SaveChanges();
@@ -32,15 +39,18 @@ namespace Unit.Tests.UnitOfWork.RepositoryTests
         [Test]
         public void RepositoryCascadeDelete_BlogPosts_Null()
         {
-            var blog = BlogObjectMother.NewBlog;
+            var blog = BlogObjectMother
+                .aDefaultBlogWithPost()
+                .ToRepository();
+
             BlogRepository.Insert(blog);
             db.SaveChanges();
 
             var insertResult = BlogRepository.GetFirstOrDefault(predicate: x =>
-                    x.Title == BlogObjectMother.NewBlog.Title,
+                    x.Title == BlogObjectMother.aDefaultBlogWithPost().Title,
                     include: i => i.Include(x => x.Posts));
 
-            Assert.That(insertResult.Title, Is.EqualTo(BlogObjectMother.NewBlogNoPosts.Title));
+            Assert.That(insertResult.Title, Is.EqualTo(BlogObjectMother.aDefaultBlogWithPost().Title));
             Assert.That(insertResult.Posts, Is.Not.Null);
 
             var postCount = PostRepository.Count();

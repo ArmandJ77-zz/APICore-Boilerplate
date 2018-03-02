@@ -1,9 +1,8 @@
-﻿using NUnit.Framework;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using NUnit.Framework;
 using Repositories;
+using TestObjects.ObjectMothers;
 using Unit.Tests.UnitOfWork.Infrastructure;
-using Unit.Tests.UnitOFWork.ObjectMothers;
 
 namespace Unit.Tests.UnitOfWork.UOWTests
 {
@@ -13,9 +12,18 @@ namespace Unit.Tests.UnitOfWork.UOWTests
         [Test]
         public void Uow_DeleteBlog_Null()
         {
-            var initalCount = Uow.GetRepository<Blog>().GetAll().ToList().Count;
-            var blogInsert = BlogObjectMother.NewBlogNoPosts;
-            Uow.GetRepository<Blog>().Insert(blogInsert);
+            //var initalCount = Uow.GetRepository<Blog>()
+            //    .GetAll()
+            //    .ToList()
+            //    .Count;
+
+            var blogInsert = BlogObjectMother
+                .aDefaultBlog()
+                .ToRepository();
+
+            Uow.GetRepository<Blog>()
+                .Insert(blogInsert);
+
             Uow.SaveChanges();
 
             var blogGet = Uow.GetRepository<Blog>().Find(blogInsert.Id);
@@ -25,7 +33,8 @@ namespace Unit.Tests.UnitOfWork.UOWTests
             Uow.GetRepository<Blog>().Delete(blogGet);
             Uow.SaveChanges();
 
-            var initalCount2 = Uow.GetRepository<Blog>().GetAll().ToList().Count;
+            //var initalCount2 = Uow.GetRepository<Blog>().GetAll().ToList().Count;
+
             var blogDelete = Uow.GetRepository<Blog>().Find(blogGet.Id);
 
             Assert.That(blogDelete, Is.Null);
@@ -34,15 +43,21 @@ namespace Unit.Tests.UnitOfWork.UOWTests
         [Test]
         public void Uow_CascadeDeleteBlogPosts_Null()
         {
-            var blog = BlogObjectMother.NewBlog;
-            Uow.GetRepository<Blog>().Insert(blog);
+            var blog = BlogObjectMother
+                .aDefaultBlog()
+                .WithTile("CascadeDelete")
+                .ToRepository();
+
+            Uow.GetRepository<Blog>()
+                .Insert(blog);
+
             Uow.SaveChanges();
 
             var insertResult = Uow.GetRepository<Blog>().GetFirstOrDefault(predicate: x =>
-                    x.Title == BlogObjectMother.NewBlog.Title,
+                    x.Title == "CascadeDelete",
                 include: i => i.Include(x => x.Posts));
 
-            Assert.That(insertResult.Title, Is.EqualTo(BlogObjectMother.NewBlogNoPosts.Title));
+            Assert.That(insertResult.Title, Is.EqualTo("CascadeDelete"));
             Assert.That(insertResult.Posts, Is.Not.Null);
 
             var postCount = Uow.GetRepository<Post>().Count();
