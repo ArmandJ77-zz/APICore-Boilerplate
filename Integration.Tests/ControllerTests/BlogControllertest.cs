@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Domain.Blogs.DTO;
+﻿using Domain.Blogs.DTO;
 using Integration.Tests.Infrastructure;
 using Integration.Tests.Infrastructure.Utils;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
