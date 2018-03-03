@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
 using Repositories.Context;
 using System.Net.Http;
+using TestObjects.ObjectMothers;
 
 namespace Integration.Tests.Infrastructure
 {
@@ -34,15 +35,9 @@ namespace Integration.Tests.Infrastructure
 
         private void BuildDb()
         {
-            #region Clients Builder
-            //_context.Client.AddRange(ClientObjectMother.aListOfClientRepositoriesWithSchedules());
-            //_context.Client.AddRange(ClientObjectMother.aListOfClientRepositories());
-            //_context.Client.AddRange(foo);
-            #endregion
+            _context.Blogs.AddRange(BlogObjectMother.aListOfBlogsAndPosts());
 
             _context.SaveChanges();
-            //var clients =_context.Client.ToList();
-            //var schedules = _context.ClientSchedule.ToList();
         }
 
         //private void AutomapperSetup()
