@@ -15,6 +15,12 @@ namespace Domain.Blogs.Mappings
                 .ReverseMap()
                 ;
 
+            CreateMap<CreateBlogDto, Blog>()
+                .ForMember(s => s.Id, d => d.MapFrom(p => p.Id))
+                .ForMember(s => s.Posts, d => d.MapFrom(p => p.Posts))
+                .ReverseMap()
+                ;
+
             CreateMap<PagedList<Blog>, PagedList<BlogDto>>()
                 .ReverseMap()
                 ;

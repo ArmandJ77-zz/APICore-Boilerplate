@@ -8,6 +8,10 @@ using Newtonsoft.Json.Serialization;
 using Repositories.Context;
 using System.Linq;
 using System.Reflection;
+using Domain.Blogs.DTO;
+using Domain.Blogs.Validation;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using UnitOfWork;
 
 namespace API
@@ -41,10 +45,8 @@ namespace API
             services.AddAutoMapperConfiguration(GetType().GetTypeInfo().Assembly.GetReferencedAssemblies().Select(c => Assembly.Load(c)).ToArray());
             services.AddCors();
             services.AddMvc()
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                });
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
+                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

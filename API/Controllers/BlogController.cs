@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using API.Infrastructure.PlanExecute;
 using AutoMapper;
 using Domain.Blogs.DTO;
@@ -7,6 +8,10 @@ using Domain.Infrastructure.GenericHandlers;
 using Microsoft.AspNetCore.Mvc;
 using Repositories;
 using System.Threading.Tasks;
+using Domain.Blogs.Validation;
+using Domain.Infrastructure.CustomExceptions;
+using FluentValidation;
+using FluentValidation.Results;
 using UnitOfWork;
 using UnitOfWork.PagedList;
 
@@ -53,9 +58,16 @@ namespace API.Controllers
                 GenericGetListHandler.ExecuteAsync<BlogDto, Blog>);
 
         [HttpPost]
-        public async Task<long> Create([FromBody] BlogDto createDto)
-            => await ExecutionPlan.Execute(
-                GenericCreateHandler.ExecuteAsync<BlogDto, Blog>, createDto);
+        public async Task<long> Create([FromBody] CreateBlogDto createDto)
+        {
+            var validator = new CreateBlogDtoValidator();
+            validator.ValidateAndThrow(createDto);
+
+            return await ExecutionPlan.Execute(
+                GenericCreateHandler.ExecuteAsync<CreateBlogDto, Blog>, createDto);
+        }
+        //=> await ExecutionPlan.Execute(
+        //    GenericCreateHandler.ExecuteAsync<CreateBlogDto, Blog>, createDto);
 
         [HttpDelete]
         public async Task<long> Delete(long id)

@@ -1,5 +1,8 @@
 ﻿using API.Infrastructure.PlanExecute;
+using Domain.Blogs.DTO;
+using Domain.Blogs.Validation;
 using Domain.Infrastructure.GenericHandlers;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Infrastructure.ServiceExtensions
@@ -17,6 +20,9 @@ namespace API.Infrastructure.ServiceExtensions
             services.AddTransient<IGenericCreateHandler, GenericCreateHandler>();
             services.AddTransient<IGenericDeleteHandler, GenericDeleteHandler>();
             services.AddTransient<IGenericUpdateHandler, GenericUpdateHandler>();
+
+
+            services.AddTransient<IValidator<CreateBlogDto>, CreateBlogDtoValidator>();
 
             return services;
         }
