@@ -32,11 +32,11 @@ namespace Integration.Tests.ControllerTests
         {
             var createDto = BlogObjectMother
                 .aDefaultBlog()
-                .WithUrl("")
+                .WithUrl(null)
                 .ToDto();
             try
             {
-                await _client.PostAsJsonAsync($"{Endpoint}/Create", createDto);
+                var result = await _client.PostAsJsonAsync($"{Endpoint}/Create", createDto);
             }
             catch (FluentValidation.ValidationException validationException)
             {

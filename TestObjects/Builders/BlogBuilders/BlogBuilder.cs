@@ -6,6 +6,7 @@ namespace TestObjects.Builders.BlogBuilders
 {
     public class BlogBuilder
     {
+        
         private static readonly string DefaultUrl = "http://qwerty.com";
         private static readonly string DefaultTitle = "QWERTY";
         private static readonly int DefaultHits = 7;

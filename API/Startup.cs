@@ -13,6 +13,7 @@ using Domain.Blogs.Validation;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using UnitOfWork;
+using API.Infrastructure.ActionFilters;
 
 namespace API
 {
@@ -40,11 +41,11 @@ namespace API
                             opt => opt.UseRowNumberForPaging()))
                     .AddUnitOfWork<DatabaseContext>();
 
-            services.AddMvc();
             services.AddDomain();
             services.AddAutoMapperConfiguration(GetType().GetTypeInfo().Assembly.GetReferencedAssemblies().Select(c => Assembly.Load(c)).ToArray());
             services.AddCors();
-            services.AddMvc()
+
+            services.AddMvc(opt => opt.Filters.Add(typeof(ValidationActionFilter)))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
         }
