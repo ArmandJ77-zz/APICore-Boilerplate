@@ -62,7 +62,7 @@ namespace API.Controllers
 
         [HttpPut]
         public async Task<long> Update([FromBody] BlogDto updateDto)
-            => await GenericUpdateHandler.ExecuteAsync<BlogDto, Blog>(updateDto); //.Execute(new BlogUpdateHandler(Map, Uow).ExecuteAsync, UpdateDto);
+            => await GenericUpdateHandler.ExecuteAsync<BlogDto, Blog>(updateDto);
 
         #endregion
 
