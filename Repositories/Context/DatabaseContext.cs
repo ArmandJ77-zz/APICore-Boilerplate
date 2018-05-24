@@ -39,8 +39,8 @@ namespace Repositories.Context
             {
                 if (typeof(ISoftDeletable).IsAssignableFrom(entity.ClrType) != true) continue;
                 //Remove shadow property because when you use _dbset.Find it may return tracked
-                //Entities that may have been marked as delted then there is no way to check 
-                //if IsDeleted == true. Ass ISoftDetalable and IsDelted prop to the deletable
+                //Entities that may have been marked as deleted then there is no way to check 
+                //if IsDeleted == true. As ISoftDetalable and IsDelted prop to the deletable
                 //Entity
                 //entity.AddProperty(IsDeletedProperty, typeof(bool));
 
