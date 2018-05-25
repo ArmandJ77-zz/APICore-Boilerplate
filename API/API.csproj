@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Infrastructure\PlanExecute\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,9 +36,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\Enums\Types.csproj" />
     <ProjectReference Include="..\UnitOfWork\UnitOfWork.csproj" />
-    <ProjectReference Include="..\WebSockets\WebSockets.csproj" />
   </ItemGroup>
-
 </Project>

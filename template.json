@@ -1,0 +1,10 @@
+{
+    "author": "Armand Jordaan",
+    "classifications": ["WebAPI", "Boilerplate"], // Tags used to search for the template.
+    "name": "ASP.NET Core MVC Boilerplate API",
+    "identity": "Boilerplate.Api.CSharp", // A unique ID for the project template.
+    "shortName": "APIBoilerplate", // You can create the project using this short name instead of the one above.
+    "tags": {
+        "language": "C#" // Specify that this template is in C#.
+    }
+}
