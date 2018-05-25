@@ -6,10 +6,9 @@ namespace API.Infrastructure.PlanExecute
 {
     public class ExecutionPlan : IExecutionPlan
     {
-        protected internal IResponseNegotiator Negotiate { get; }
+        //protected internal IResponseNegotiator Negotiate { get; }
         public ExecutionPlan()
         {
-            Negotiate = new ResponseNegotiator();
         }
 
         public async Task<THandlerResult> Execute<THandlerResult>(Func<Task<THandlerResult>> handlerFunc)
