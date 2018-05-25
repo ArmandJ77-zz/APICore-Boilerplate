@@ -64,6 +64,14 @@ namespace API
 
             app.UseMiddleware<SerilogMiddleware>();
             app.UseMvc();
+
+            app.UsePathBase("/api");
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Base}/{action=Index}/{id?}");
+            });
         }
     }
 }

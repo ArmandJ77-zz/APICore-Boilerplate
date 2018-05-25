@@ -6,7 +6,7 @@ using UnitOfWork.PagedList;
 
 namespace Domain.Infrastructure.GenericHandlers
 {
-    public class GenericGetPageList : BaseHandler, IGenericGetPageList
+    public class GenericGetPageList : BaseHandler, IGenericGetPageListHandler
     {
         public GenericGetPageList(IMapper map, IUnitOfWork uow) : base(map,uow)
         {

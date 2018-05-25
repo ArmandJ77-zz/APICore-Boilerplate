@@ -16,7 +16,7 @@ namespace API.Infrastructure.ServiceExtensions
 
             services.AddTransient<IGenericFindByIdHandler, GenericFindByIdHandler>();
             services.AddTransient<IGenericGetListHandler, GenericGetList>();
-            services.AddTransient<IGenericGetPageList, GenericGetPageList>();
+            services.AddTransient<IGenericGetPageListHandler, GenericGetPageList>();
             services.AddTransient<IGenericCreateHandler, GenericCreateHandler>();
             services.AddTransient<IGenericDeleteHandler, GenericDeleteHandler>();
             services.AddTransient<IGenericUpdateHandler, GenericUpdateHandler>();
