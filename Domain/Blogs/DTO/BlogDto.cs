@@ -8,8 +8,6 @@ namespace Domain.Blogs.DTO
     {
         public string Url { get; set; }
         public string Title { get; set; }
-        public int Hits { get; set; }
-
         public List<PostDto> Posts { get; set; }
     }
 }

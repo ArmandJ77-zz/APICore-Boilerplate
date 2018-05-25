@@ -1,4 +1,5 @@
-﻿using API.Infrastructure.ActionFilters;
+﻿using System.IO;
+using API.Infrastructure.ActionFilters;
 using API.Infrastructure.Middleware;
 using API.Infrastructure.ServiceExtensions;
 using FluentValidation.AspNetCore;
@@ -13,6 +14,8 @@ using Repositories.Context;
 using Serilog;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.PlatformAbstractions;
+using Swashbuckle.AspNetCore.Swagger;
 using UnitOfWork;
 
 namespace API
@@ -44,10 +47,16 @@ namespace API
             services.AddDomain();
             services.AddAutoMapperConfiguration(GetType().GetTypeInfo().Assembly.GetReferencedAssemblies().Select(c => Assembly.Load(c)).ToArray());
             services.AddCors();
-
-            services.AddMvc(opt => opt.Filters.Add(typeof(ValidationActionFilter)))
+            services.AddMvc()
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Boilerplate API", Version = "v1" });
+                var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "Api.xml");
+                c.IncludeXmlComments(filePath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,15 +64,21 @@ namespace API
         {
             loggerFactory.AddSerilog();
             
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseStatusCodePages();
+                app.UseDatabaseErrorPage();
             }
 
+            app.UseMiddleware(typeof(ExceptionHandlingMiddleware));
 
-            app.UseMiddleware<SerilogMiddleware>();
-            app.UseMvc();
+            app.UseStaticFiles();
+
+            app.UseCors(options => options.AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin()
+                .AllowCredentials());
 
             app.UsePathBase("/api");
             app.UseMvc(routes =>
@@ -71,6 +86,13 @@ namespace API
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Base}/{action=Index}/{id?}");
+            });
+
+            app.UseSwagger(c => { c.RouteTemplate = "api-docs/{documentName}/swagger.json"; });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/api-docs/v1/swagger.json", "Boilerplate API");
+                c.RoutePrefix = "docs";
             });
         }
     }
