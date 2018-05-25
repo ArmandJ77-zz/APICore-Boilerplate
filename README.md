@@ -6,6 +6,14 @@ An ASP.NET core API boilerplate which is based on key design principles such as:
 * Repository Pattern
 * UnitOfWork Pattern
 
+# What's in the box?
+
+* ASP.NET Core 2  
+* Swashbuckle for swagger support
+* FluentValidate for validation
+* Nunit for testing
+* Cake for the build scripting
+
 # Build Steps
 Cake build configuration has been added to execute the following:
 
