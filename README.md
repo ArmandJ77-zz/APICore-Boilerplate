@@ -14,6 +14,14 @@ An ASP.NET core API boilerplate which is based on key design principles such as:
 * Nunit for testing
 * Cake for the build scripting
 
+# Swagger Support
+This is provided with the assistance of swashbuckle:
+
+* The swagger ui can be accessed from 
+```
+[localhost]/api/docs/
+```
+
 # Build Steps
 Cake build configuration has been added to execute the following:
 
