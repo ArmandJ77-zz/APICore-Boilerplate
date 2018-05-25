@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using API.Infrastructure.ActionFilters;
 using API.Infrastructure.Middleware;
 using API.Infrastructure.ServiceExtensions;
@@ -14,8 +16,11 @@ using Repositories.Context;
 using Serilog;
 using System.Linq;
 using System.Reflection;
+using Domain.Blogs.Validation;
+using FluentValidation.Validators;
 using Microsoft.Extensions.PlatformAbstractions;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using UnitOfWork;
 
 namespace API
@@ -56,6 +61,7 @@ namespace API
                 c.SwaggerDoc("v1", new Info { Title = "Boilerplate API", Version = "v1" });
                 var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "Api.xml");
                 c.IncludeXmlComments(filePath);
+                //c.SchemaFilter<FluentValidationRules>();
             });
         }
 
@@ -94,6 +100,30 @@ namespace API
                 c.SwaggerEndpoint("/api-docs/v1/swagger.json", "Boilerplate API");
                 c.RoutePrefix = "docs";
             });
+        }
+    }
+
+    internal class FluentValidationRules : ISchemaFilter
+    {
+        //TODO impliment a generic fuentvalidate search funciton
+        public void Apply(Schema model, SchemaFilterContext context)
+        {
+            var validator = new CreateBlogDtoValidator(); //Your fluent validator class
+
+            model.Required = new List<string>();
+            
+            var validatorDescriptor = validator.CreateDescriptor();
+
+            foreach (var key in model.Properties.Keys)
+            {
+                foreach (var validatorType in validatorDescriptor.GetValidatorsForMember(key))
+                {
+                    if (validatorType is NotEmptyValidator)
+                    {
+                        model.Required.Add(key);
+                    }
+                }
+            }
         }
     }
 }
