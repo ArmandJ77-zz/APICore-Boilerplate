@@ -33,17 +33,16 @@ To execute the cake build script execute the following:
 # To install CLI template
 The solution supports .NET Core CLI template, to install:
 
-*open cmd 
-*to install run 
+* open cmd and execute
 ```
 dotnet new --install "[customDirectory]\APICore-BoilerPlate"
 ```
-*To start a new project with this template
+* To start a new project with this template
 ```
 dotnet new boilerplate --name [your solution name]
 ```
 
-To uninstall the template simply execute 
+* To uninstall the template simply execute 
 ```
 dotnet new --uninstall "[customDirectory]\APICore-BoilerPlate"
 ```
