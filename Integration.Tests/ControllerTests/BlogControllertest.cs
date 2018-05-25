@@ -26,7 +26,7 @@ namespace Integration.Tests.ControllerTests
             var result = await response.Content.Deserialize<long>();
             Assert.That(result, Is.GreaterThan(0));
         }
-
+            
         [Test]
         public async Task BlogController_InsertInvalidUrl_ValidationException()
         {

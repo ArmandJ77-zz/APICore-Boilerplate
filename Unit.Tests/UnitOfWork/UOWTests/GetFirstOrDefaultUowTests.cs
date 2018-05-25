@@ -36,10 +36,10 @@ namespace Unit.Tests.UnitOfWork.UOWTests
             Uow.SaveChanges();
 
             var result = Uow.GetRepository<Blog>().GetFirstOrDefault(
-                predicate: x => x.Title == "ASDF",
-                orderBy: o => o.OrderByDescending(d => d.Hits),
-                selector: s => s.Posts.FirstOrDefault(),
-                include: i => i.Include(a => a.Posts));
+                predicate: x => x.Title == "ASDF");
+                //orderBy: o => o.OrderByDescending(d => d.Hits),
+                //selector: s => s.Posts.FirstOrDefault(),
+                //include: i => i.Include(a => a.Posts));
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.TypeOf<Post>());
