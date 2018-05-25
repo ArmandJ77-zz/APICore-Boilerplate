@@ -22,4 +22,22 @@ To execute the cake build script execute the following:
 * Open powershell or use VS Code's powershell extension
 * execute ./build.ps
 
+# To install CLI template
+The solution supports .NET Core CLI template, to install:
+
+*open cmd 
+*to install run 
+```
+dotnet new --install "[customDirectory]\APICore-BoilerPlate"
+```
+*To start a new project with this template
+```
+dotnet new boilerplate --name [your solution name]
+```
+
+To uninstall the template simply execute 
+```
+dotnet new --uninstall "[customDirectory]\APICore-BoilerPlate"
+```
+
 
