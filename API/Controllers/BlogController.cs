@@ -19,7 +19,7 @@ namespace API.Controllers
             IExecutionPlan executionPlan,
             IGenericFindByIdHandler genericFindByIdHandler,
             IGenericGetListHandler genericGetListHandler,
-            IGenericGetPageList genericGetPageListHandler,
+            IGenericGetPageListHandler genericGetPageListHandler,
             IGenericCreateHandler genericCreateHandler,
             IGenericDeleteHandler genericDeleteHandler,
             IGenericUpdateHandler genericUpdateHandler)

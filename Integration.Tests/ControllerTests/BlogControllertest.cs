@@ -34,6 +34,7 @@ namespace Integration.Tests.ControllerTests
                 .aDefaultBlog()
                 .WithUrl(null)
                 .ToDto();
+
             try
             {
                 var result = await _client.PostAsJsonAsync($"{Endpoint}/Create", createDto);

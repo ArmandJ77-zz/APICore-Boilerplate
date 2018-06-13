@@ -5,7 +5,7 @@ using UnitOfWork;
 
 namespace Domain.Infrastructure.GenericHandlers
 {
-    public class GenericCreateHandler : BaseHandler, IGenericCreateHandler
+    public class GenericCreateHandler : BaseHandler, IGenericCreateHandler, ITransientService
     {
         public GenericCreateHandler(IMapper map, IUnitOfWork uow) : base(map,uow)
         {

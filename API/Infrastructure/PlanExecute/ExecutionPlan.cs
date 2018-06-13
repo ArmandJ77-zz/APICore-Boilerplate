@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace API.Infrastructure.PlanExecute
 {
-    public class ExecutionPlan : IExecutionPlan
+    public class ExecutionPlan : IExecutionPlan, ITransientService
     {
         //protected internal IResponseNegotiator Negotiate { get; }
         public ExecutionPlan()

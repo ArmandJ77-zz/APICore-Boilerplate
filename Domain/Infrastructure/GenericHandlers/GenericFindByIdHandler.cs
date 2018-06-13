@@ -6,7 +6,7 @@ using UnitOfWork;
 
 namespace Domain.Infrastructure.GenericHandlers
 {
-    public class GenericFindByIdHandler : BaseHandler, IGenericFindByIdHandler
+    public class GenericFindByIdHandler : BaseHandler, IGenericFindByIdHandler, ITransientService
     {
         public GenericFindByIdHandler(IMapper mapper, IUnitOfWork uow) : base(mapper, uow)
         {

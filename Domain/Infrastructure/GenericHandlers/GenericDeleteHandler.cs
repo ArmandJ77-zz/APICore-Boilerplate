@@ -6,7 +6,7 @@ using UnitOfWork;
 
 namespace Domain.Infrastructure.GenericHandlers
 {
-    public class GenericDeleteHandler : BaseHandler, IGenericDeleteHandler
+    public class GenericDeleteHandler : BaseHandler, IGenericDeleteHandler, ITransientService
     {
         public GenericDeleteHandler(IMapper map, IUnitOfWork uow) : base(map, uow)
         {

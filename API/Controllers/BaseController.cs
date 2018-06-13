@@ -14,7 +14,7 @@ namespace API.Controllers
 
         public IGenericFindByIdHandler GenericFindByIdHandler { get; }
         public IGenericGetListHandler GenericGetListHandler{ get; }
-        public IGenericGetPageList GenericGetPageListHandler { get; }
+        public IGenericGetPageListHandler GenericGetPageListHandler { get; }
         public IGenericCreateHandler GenericCreateHandler { get; }
         public IGenericDeleteHandler GenericDeleteHandler { get; }
         public IGenericUpdateHandler GenericUpdateHandler { get; set; }
@@ -24,7 +24,7 @@ namespace API.Controllers
             IExecutionPlan executionPlan,
             IGenericFindByIdHandler genericFindByIdHandler,
             IGenericGetListHandler genericGetListHandler,
-            IGenericGetPageList genericGetPageListHandler,
+            IGenericGetPageListHandler genericGetPageListHandler,
             IGenericCreateHandler genericCreateHandler,
             IGenericDeleteHandler genericDeleteHandler,
             IGenericUpdateHandler genericUpdateHandler)

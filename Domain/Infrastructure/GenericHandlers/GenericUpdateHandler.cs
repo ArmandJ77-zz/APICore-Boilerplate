@@ -6,7 +6,7 @@ using UnitOfWork;
 
 namespace Domain.Infrastructure.GenericHandlers
 {
-    public class GenericUpdateHandler : BaseHandler, IGenericUpdateHandler
+    public class GenericUpdateHandler : BaseHandler, IGenericUpdateHandler, ITransientService
     {
         public GenericUpdateHandler(IMapper map, IUnitOfWork uow) : base(map, uow)
         {

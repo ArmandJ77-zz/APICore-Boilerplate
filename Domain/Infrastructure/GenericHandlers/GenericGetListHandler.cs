@@ -6,9 +6,9 @@ using UnitOfWork;
 
 namespace Domain.Infrastructure.GenericHandlers
 {
-    public class GenericGetList : BaseHandler, IGenericGetListHandler
+    public class GenericGetListHandler : BaseHandler, IGenericGetListHandler, ITransientService
     {
-        public GenericGetList(IMapper mapper, IUnitOfWork uow) : base(mapper, uow)
+        public GenericGetListHandler(IMapper mapper, IUnitOfWork uow) : base(mapper, uow)
         {
         }
 
