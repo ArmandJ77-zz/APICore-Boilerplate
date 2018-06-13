@@ -1,10 +1,11 @@
 ﻿using Domain.Blogs.DTO;
 using Integration.Tests.Infrastructure;
-using Integration.Tests.Infrastructure.Utils;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestObjects.Infrastructure.ControllerEndpoints;
+using TestObjects.Infrastructure.Utils;
 using TestObjects.ObjectMothers;
 using UnitOfWork.PagedList;
 
@@ -20,13 +21,13 @@ namespace Integration.Tests.ControllerTests
         {
             var createDto = BlogObjectMother
                 .aDefaultBlog()
-                .ToDto();
+                .ToCreateDto();
 
-            var response = await _client.PostAsJsonAsync($"{Endpoint}/Create", createDto);
+            var response = await _client.PostAsJsonAsync(BlogControllerEndpoints.Create, createDto);
             var result = await response.Content.Deserialize<long>();
             Assert.That(result, Is.GreaterThan(0));
         }
-
+            
         [Test]
         public async Task BlogController_InsertInvalidUrl_ValidationException()
         {
@@ -37,7 +38,7 @@ namespace Integration.Tests.ControllerTests
 
             try
             {
-                var result = await _client.PostAsJsonAsync($"{Endpoint}/Create", createDto);
+                var result = await _client.PostAsJsonAsync(BlogControllerEndpoints.Create, createDto);
             }
             catch (FluentValidation.ValidationException validationException)
             {
@@ -54,7 +55,7 @@ namespace Integration.Tests.ControllerTests
                 .ToDto();
             try
             {
-                await _client.PostAsJsonAsync($"{Endpoint}/Create", createDto);
+                await _client.PostAsJsonAsync(BlogControllerEndpoints.Create, createDto);
             }
             catch (FluentValidation.ValidationException validationException)
             {
@@ -65,27 +66,27 @@ namespace Integration.Tests.ControllerTests
         [Test]
         public async Task BlogController_Delete_IdofDeletedResult()
         {
-            var response = await _client.DeleteAsync("/api/blog/delete?id=1");
+            var blogs = await _client.GetAsync(BlogControllerEndpoints.List);
+            blogs.EnsureSuccessStatusCode();
+            var blogsResult = await blogs.Content.Deserialize<List<BlogDto>>();
+
+            var response = await _client.DeleteAsync(BlogControllerEndpoints.Delete(blogsResult.FirstOrDefault().Id));
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.Deserialize<long>();
 
             Assert.That(result, Is.EqualTo(1));
-
-            //var getResponse = await _client.GetAsync("/api/blog/Get?id=1");
-
-            //Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
         [Test]
         public async Task BlogController_Get_Id()
         {
-            var blogs = await _client.GetAsync("/api/blog/List");
+            var blogs = await _client.GetAsync(BlogControllerEndpoints.List);
             blogs.EnsureSuccessStatusCode();
 
             var blogsResult = await blogs.Content.Deserialize<List<BlogDto>>();
 
-            var response = await _client.GetAsync($"/api/blog/Get?id={blogsResult.FirstOrDefault().Id}");
+            var response = await _client.GetAsync(BlogControllerEndpoints.Get(blogsResult.FirstOrDefault().Id));
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.Deserialize<BlogDto>();
@@ -94,22 +95,9 @@ namespace Integration.Tests.ControllerTests
         }
 
         [Test]
-        public async Task BlogController_GetDefault_IPagedList()
-        {
-            var response = await _client.GetAsync("/api/blog/PagedList");
-            response.EnsureSuccessStatusCode();
-
-            var result = await response.Content.Deserialize<PagedList<BlogDto>>();
-
-            Assert.That(result.Items.Count, Is.GreaterThan(1));
-            Assert.That(result.TotalCount, Is.GreaterThan(1));
-            Assert.That(result.PageSize, Is.GreaterThan(1));
-        }
-
-        [Test]
         public async Task BlogController_Get_IPagedList()
         {
-            var response = await _client.GetAsync("/api/blog/PagedList?pageSize=2&pageIndex=1");
+            var response = await _client.GetAsync(BlogControllerEndpoints.PagedList(2, 1));
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.Deserialize<PagedList<BlogDto>>();

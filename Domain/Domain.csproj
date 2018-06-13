@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Enums\Types.csproj" />
+    <ProjectReference Include="..\EnumTypes\EnumTypes.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
     <ProjectReference Include="..\UnitOfWork\UnitOfWork.csproj" />
   </ItemGroup>

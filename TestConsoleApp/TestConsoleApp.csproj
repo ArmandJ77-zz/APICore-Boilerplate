@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EnumTypes\EnumTypes.csproj" />
     <ProjectReference Include="..\Unit.Tests\Unit.Tests.csproj" />
     <ProjectReference Include="..\UnitOfWork\UnitOfWork.csproj" />
   </ItemGroup>

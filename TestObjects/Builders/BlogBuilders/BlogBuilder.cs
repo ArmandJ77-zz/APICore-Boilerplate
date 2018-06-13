@@ -1,6 +1,7 @@
-﻿using Repositories;
+﻿using Domain.Blogs.DTO;
+using Newtonsoft.Json;
+using Repositories;
 using System.Collections.Generic;
-using Domain.Blogs.DTO;
 
 namespace TestObjects.Builders.BlogBuilders
 {
@@ -62,34 +63,12 @@ namespace TestObjects.Builders.BlogBuilders
         }
 
         public Blog ToRepository()
-        {
-            var blog = new Blog()
-            {
-                Title = this.Title,
-                Id = this.Id,
-                Hits = this.Hits,
-                IsDeleted = this.IsDeleted,
-                Url = this.Url
-            };
-
-            this.Posts.ForEach(x => blog.Posts.Add(x.ToRepository()));
-
-            return blog;
-        }
+            => JsonConvert.DeserializeObject<Blog>(JsonConvert.SerializeObject(this));
 
         public BlogDto ToDto()
-        {
-            var blog = new BlogDto()
-            {
-                Title = this.Title,
-                Id = this.Id,
-                Hits = this.Hits,
-                Url = this.Url
-            };
+            => JsonConvert.DeserializeObject<BlogDto>(JsonConvert.SerializeObject(this));
 
-            this.Posts.ForEach(x => blog.Posts.Add(x.ToDto()));
-
-            return blog;
-        }
+        public CreateBlogDto ToCreateDto()
+            => JsonConvert.DeserializeObject<CreateBlogDto>(JsonConvert.SerializeObject(this));
     }
 }

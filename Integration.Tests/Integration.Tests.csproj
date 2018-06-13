@@ -20,11 +20,9 @@
   <ItemGroup>
     <ProjectReference Include="..\API\API.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\Enums\Types.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
     <ProjectReference Include="..\TestObjects\TestObjects.csproj" />
     <ProjectReference Include="..\UnitOfWork\UnitOfWork.csproj" />
-    <ProjectReference Include="..\WebSockets\WebSockets.csproj" />
   </ItemGroup>
 
 </Project>

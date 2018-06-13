@@ -1,0 +1,12 @@
+{
+  "author": "Armand Jordaan",
+  "classifications": [ "Boilerplate" , "API" ],
+  "name": "API Core Boilerplate",
+  "identity": "APICoreBoilerplate",
+  "shortName": "boilerplate",
+  "tags": {
+    "language": "C#"
+  },
+  "sourceName": "APICoreBoilerplate",
+  "preferNameDirectory": true
+}

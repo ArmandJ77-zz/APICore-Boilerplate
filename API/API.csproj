@@ -4,13 +4,16 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.0\API.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="log-20180311.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Infrastructure\PlanExecute\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +27,7 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,9 +36,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\Enums\Types.csproj" />
     <ProjectReference Include="..\UnitOfWork\UnitOfWork.csproj" />
-    <ProjectReference Include="..\WebSockets\WebSockets.csproj" />
   </ItemGroup>
-
 </Project>
