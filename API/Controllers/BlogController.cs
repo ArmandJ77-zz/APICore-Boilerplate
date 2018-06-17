@@ -1,5 +1,4 @@
-﻿using API.Infrastructure.PlanExecute;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Blogs.DTO;
 using Domain.Infrastructure.GenericHandlers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +10,11 @@ using UnitOfWork.PagedList;
 
 namespace API.Controllers
 {
+    /// <inheritdoc />
     public class BlogController : BaseController
     {
-        public BlogController(IMapper mapper, IUnitOfWork uow, IExecutionPlan executionPlan) : base(mapper, uow, executionPlan)
+        /// <inheritdoc />
+        public BlogController(IMapper mapper, IUnitOfWork uow) : base(mapper, uow)
         {
         }
 
@@ -28,8 +29,7 @@ namespace API.Controllers
         [HttpGet]
         [Route("/blogs/{id}")]
         public async Task<BlogDto> Get([FromRoute]long id, [FromServices] IGenericFindByIdHandler handler)
-            => await ExecutionPlan.Execute<BlogDto>(
-                handler.ExecuteAsync<BlogDto, Blog>, id);
+            => await handler.ExecuteAsync<BlogDto, Blog>(id);
 
         /// <summary>
         /// Returns a paged list of Blogs
@@ -42,8 +42,7 @@ namespace API.Controllers
         [HttpGet]
         [Route("/blogs/pagedlist")]
         public async Task<IPagedList<BlogDto>> PagedList([FromQuery] int pageSize, [FromQuery] int pageIndex, [FromServices] IGenericGetPageListHandler handler)
-            => await ExecutionPlan.Execute<IPagedList<BlogDto>>(
-                handler.ExecuteAsync<BlogDto, Blog>, pageSize, pageIndex);
+            => await handler.ExecuteAsync<BlogDto, Blog>(pageSize, pageIndex);
 
         /// <summary>
         /// Returns all the blogs's as a list
@@ -54,25 +53,24 @@ namespace API.Controllers
         [HttpGet]
         [Route("/blogs/list")]
         public async Task<List<BlogDto>> List([FromServices] IGenericGetListHandler handler)
-            => await ExecutionPlan.Execute<List<BlogDto>>(
-                handler.ExecuteAsync<BlogDto, Blog>);
+            => await handler.ExecuteAsync<BlogDto, Blog>();
 
 
-        /// <summary>
-        /// Update a blog
-        /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /Todo
-        ///     {
-        ///        "id": 1
-        ///        "url": "http://asdf.co.za",
-        ///        "title": "The detailed life of qwerty and asdf"
-        ///     }
-        ///
-        /// </remarks>
-        /// <param name="blogDto">The dto containing the updated data</param>
+        ///  <summary>
+        ///  Update a blog
+        ///  </summary>
+        ///  <remarks>
+        ///  Sample request:
+        /// 
+        ///      POST /Todo
+        ///      {
+        ///         "id": 1
+        ///         "url": "http://asdf.co.za",
+        ///         "title": "The detailed life of qwerty and asdf"
+        ///      }
+        /// 
+        ///  </remarks>
+        /// <param name="updateDto"></param>
         [ProducesResponseType(typeof(CreateBlogDto), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -100,8 +98,7 @@ namespace API.Controllers
         [HttpPost]
         [Route("/blogs")]
         public async Task<long> Create([FromBody] CreateBlogDto createDto, [FromServices] IGenericCreateHandler handler)
-            => await ExecutionPlan.Execute(
-                handler.ExecuteAsync<CreateBlogDto, Blog>, createDto);
+            => await handler.ExecuteAsync<CreateBlogDto, Blog>(createDto);
 
         /// <summary>
         /// Delete a blog by unique identifier
@@ -115,7 +112,6 @@ namespace API.Controllers
         [Route("/blogs/{id}")]
         public async Task<long> Delete([FromRoute]long id, [FromServices] IGenericDeleteHandler handler)
             => await handler.ExecuteAsync<BlogDto, Blog>(id);
-
 
         #endregion
 

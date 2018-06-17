@@ -1,5 +1,4 @@
-﻿using API.Infrastructure.PlanExecute;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using UnitOfWork;
 
@@ -8,16 +7,13 @@ namespace API.Controllers
     public class BaseController : Controller
     {
         public IUnitOfWork Uow { get; }
-        public IExecutionPlan ExecutionPlan { get; }
         public IMapper Map { get; }
 
         public BaseController(IMapper mapper,
-                IUnitOfWork uow,
-                IExecutionPlan executionPlan)
+                IUnitOfWork uow)
         {
             Map = mapper;
             Uow = uow;
-            ExecutionPlan = executionPlan;
         }
 
         [HttpGet]
